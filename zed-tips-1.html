@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Zed Tips</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Inter:wght@400;500;600;700&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0118;
+    --bg-2:#120a26;
+    --card:#160c30;
+    --card-2:#1c1240;
+    --line:#2a1c50;
+    --blue:#22d3ff;
+    --purple:#a855f7;
+    --pink:#ec4899;
+    --orange:#ff8c3c;
+    --text:#f2f0ff;
+    --muted:#9490b8;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter','Noto Sans Ethiopic',sans-serif;
+    height:100%;
+    overflow-x:hidden;
+  }
+  body{
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(34,211,255,.12), transparent 40%),
+      radial-gradient(circle at 85% 15%, rgba(236,72,153,.10), transparent 45%),
+      radial-gradient(circle at 90% 90%, rgba(255,140,60,.10), transparent 40%);
+  }
+  #app{max-width:480px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; position:relative;}
+
+  /* ---------- Top bar ---------- */
+  header{
+    position:sticky; top:0; z-index:30;
+    display:flex; align-items:center; gap:10px;
+    padding:14px 18px;
+    background:rgba(10,1,24,.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .logo-mark{
+    width:34px;height:34px;border-radius:9px;
+    background:linear-gradient(135deg,var(--blue),var(--purple) 55%,var(--orange));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Orbitron',sans-serif; font-weight:900; font-size:18px; color:#0a0118;
+    flex-shrink:0;
+  }
+  .brand{font-family:'Orbitron',sans-serif; font-weight:800; font-size:19px; letter-spacing:.5px;}
+  .brand span{background:linear-gradient(90deg,var(--blue),var(--purple),var(--orange)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  header .sub{font-size:11px; color:var(--muted); margin-top:-2px;}
+  .header-icon{margin-inline-start:auto; width:36px;height:36px;border-radius:10px;background:var(--card-2); display:flex;align-items:center;justify-content:center; border:1px solid var(--line);}
+
+  /* ---------- circuit divider (signature element) ---------- */
+  .circuit-divider{ height:14px; margin:6px 18px 2px; opacity:.55;}
+  .circuit-divider svg{width:100%;height:100%;display:block;}
+
+  main{flex:1; padding:16px 16px 90px;}
+  section{margin-bottom:26px;}
+  .section-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;}
+  .section-head h2{font-family:'Orbitron',sans-serif; font-size:14px; letter-spacing:1px; text-transform:uppercase; color:var(--text);}
+  .section-head .accent{width:6px;height:6px;border-radius:2px; display:inline-block; margin-inline-end:8px; background:var(--blue); box-shadow:0 0 8px var(--blue);}
+  .see-all{font-size:12px; color:var(--muted);}
+
+  /* horizontal scroller */
+  .hscroll{display:flex; gap:12px; overflow-x:auto; padding-bottom:4px; scroll-snap-type:x mandatory;}
+  .hscroll::-webkit-scrollbar{display:none;}
+
+  .card{
+    background:linear-gradient(180deg,var(--card),var(--card-2));
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:14px;
+    position:relative;
+    overflow:hidden;
+    transition:transform .15s ease, border-color .15s ease;
+  }
+  .card:active{transform:scale(.97);}
+  .card::before{
+    content:"";
+    position:absolute; inset:-1px;
+    border-radius:16px;
+    padding:1px;
+    background:linear-gradient(135deg,var(--blue),transparent 40%, var(--pink));
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    opacity:0; transition:opacity .2s;
+  }
+  .card:hover::before, .card:active::before{opacity:.6;}
+
+  .card-tut{min-width:210px; scroll-snap-align:start;}
+  .thumb{
+    width:100%; height:110px; border-radius:10px; margin-bottom:10px;
+    background:linear-gradient(135deg,var(--blue),var(--purple));
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Orbitron'; font-weight:900; color:rgba(255,255,255,.85); font-size:26px;
+  }
+  .tag{
+    display:inline-block; font-size:10px; padding:3px 8px; border-radius:20px;
+    background:rgba(34,211,255,.12); color:var(--blue); border:1px solid rgba(34,211,255,.3);
+    margin-bottom:8px;
+  }
+  .card h3{font-size:14px; font-weight:600; margin-bottom:4px; line-height:1.3;}
+  .card p{font-size:12px; color:var(--muted); line-height:1.4;}
+
+  /* apps grid */
+  .apps-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .app-card{display:flex; gap:10px; align-items:center;}
+  .app-icon{
+    width:52px;height:52px;border-radius:14px; flex-shrink:0;
+    background:linear-gradient(135deg,var(--orange),var(--pink));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Orbitron'; font-weight:800; color:#0a0118; font-size:20px;
+  }
+  .app-meta h4{font-size:13px; font-weight:600; margin-bottom:2px;}
+  .app-meta .rating{font-size:11px; color:var(--muted);}
+  .dl-btn{
+    margin-top:8px; width:100%; padding:8px; border-radius:10px; border:none;
+    background:linear-gradient(90deg,var(--blue),var(--purple));
+    color:#0a0118; font-weight:700; font-size:12px; cursor:pointer;
+  }
+
+  /* photos masonry-ish */
+  .photo-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+  .photo{
+    aspect-ratio:1/1; border-radius:10px; overflow:hidden;
+    background:linear-gradient(135deg,var(--purple),var(--pink),var(--orange));
+    display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.7); font-size:20px;
+  }
+
+  /* ad slots */
+  .ad-slot{
+    border:1px dashed var(--line); border-radius:14px; padding:14px;
+    display:flex; align-items:center; justify-content:center; flex-direction:column; gap:4px;
+    color:var(--muted); font-size:11px; text-align:center; background:rgba(255,255,255,.02);
+  }
+  .ad-slot b{color:var(--muted); font-size:10px; letter-spacing:1px; text-transform:uppercase;}
+
+  /* bottom nav */
+  nav{
+    position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+    width:100%; max-width:480px;
+    display:flex; justify-content:space-around; align-items:center;
+    padding:10px 6px calc(10px + env(safe-area-inset-bottom));
+    background:rgba(10,1,24,.9); backdrop-filter:blur(14px);
+    border-top:1px solid var(--line);
+    z-index:40;
+  }
+  .nav-item{
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    color:var(--muted); font-size:10px; background:none; border:none; cursor:pointer;
+    width:64px; padding:4px 0;
+  }
+  .nav-item svg{width:22px;height:22px; stroke:var(--muted); fill:none; stroke-width:1.8;}
+  .nav-item.active{color:var(--blue);}
+  .nav-item.active svg{stroke:var(--blue); filter:drop-shadow(0 0 6px rgba(34,211,255,.6));}
+
+  .page{display:none;}
+  .page.active{display:block; animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  /* settings page */
+  .settings-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px; background:var(--card); border:1px solid var(--line); border-radius:14px; margin-bottom:10px;
+  }
+  .settings-row span{font-size:13px;}
+  .switch{width:40px; height:22px; border-radius:20px; background:var(--card-2); position:relative; border:1px solid var(--line); cursor:pointer;}
+  .switch::after{content:""; position:absolute; width:16px;height:16px; border-radius:50%; background:var(--muted); top:2px; left:2px; transition:.2s;}
+  .switch.on{background:linear-gradient(90deg,var(--blue),var(--purple));}
+  .switch.on::after{left:20px; background:#fff;}
+
+  .status-banner{
+    font-size:11px; text-align:center; padding:8px; border-radius:10px;
+    background:rgba(168,85,247,.1); color:var(--purple); border:1px solid rgba(168,85,247,.3);
+    margin-bottom:14px;
+  }
+  .loading-dot{display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--blue); margin-inline-end:6px; animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:.3;}50%{opacity:1;}}
+
+  ::-webkit-scrollbar{width:0;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <div class="logo-mark">Z</div>
+    <div>
+      <div class="brand">Zed <span>Tips</span></div>
+      <div class="sub">ቴክ ትምህርት • አፕሊኬሽኖች • ፎቶዎች</div>
+    </div>
+    <div class="header-icon">🔔</div>
+  </header>
+
+  <div class="circuit-divider">
+    <svg viewBox="0 0 400 14" preserveAspectRatio="none">
+      <polyline points="0,7 60,7 80,2 140,2 160,7 400,7" fill="none" stroke="url(#g)" stroke-width="1.5"/>
+      <circle cx="80" cy="2" r="2.2" fill="#22d3ff"/>
+      <circle cx="160" cy="7" r="2.2" fill="#ec4899"/>
+      <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#22d3ff"/><stop offset="0.5" stop-color="#a855f7"/><stop offset="1" stop-color="#ff8c3c"/>
+      </linearGradient></defs>
+    </svg>
+  </div>
+
+  <main>
+
+    <!-- ================= HOME PAGE ================= -->
+    <div class="page active" id="page-home">
+
+      <div id="status-banner" class="status-banner"><span class="loading-dot"></span>ከዳታቤዝ (Firebase) ጋር በመገናኘት ላይ...</div>
+
+      <div class="ad-slot" style="margin-bottom:20px;">
+        <b>AD SLOT · BANNER</b>
+        <span>የባነር ማስታወቂያ እዚህ ይታያል (AdMob Banner)</span>
+      </div>
+
+      <section>
+        <div class="section-head">
+          <h2><span class="accent"></span>የቴክ ትምህርቶች</h2>
+          <span class="see-all">ሁሉንም →</span>
+        </div>
+        <div class="hscroll" id="tutorials-list"></div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2><span class="accent" style="background:var(--orange); box-shadow:0 0 8px var(--orange);"></span>የቀረቡ አፕሊኬሽኖች</h2>
+          <span class="see-all">ሁሉንም →</span>
+        </div>
+        <div class="apps-grid" id="apps-list"></div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2><span class="accent" style="background:var(--pink); box-shadow:0 0 8px var(--pink);"></span>ፎቶዎች</h2>
+          <span class="see-all">ሁሉንም →</span>
+        </div>
+        <div class="photo-grid" id="photos-list"></div>
+      </section>
+
+    </div>
+
+    <!-- ================= CATEGORIES PAGE ================= -->
+    <div class="page" id="page-categories">
+      <div class="section-head"><h2><span class="accent"></span>ምድቦች</h2></div>
+      <div class="apps-grid" id="categories-list"></div>
+    </div>
+
+    <!-- ================= ADD/ADMIN PAGE ================= -->
+    <div class="page" id="page-admin">
+      <div class="section-head"><h2><span class="accent" style="background:var(--orange);box-shadow:0 0 8px var(--orange);"></span>አድሚን</h2></div>
+
+      <div id="admin-login-box">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;">
+          ወደ አድሚን ገጽ ለመግባት በFirebase Authentication የተመዘገበ ኢሜይል/የይለፍ ቃል ተጠቀም (Firebase Console → Authentication → Email/Password ማንቃት አለብህ, ከዚያ admin user ፍጠር).
+        </p>
+        <input id="admin-email" type="email" placeholder="ኢሜይል" style="width:100%;padding:12px;margin-bottom:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);">
+        <input id="admin-pass" type="password" placeholder="የይለፍ ቃል" style="width:100%;padding:12px;margin-bottom:12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);">
+        <button class="dl-btn" onclick="adminLogin()">ግባ (Login)</button>
+        <p id="login-msg" style="font-size:12px;margin-top:10px;color:var(--pink);"></p>
+      </div>
+
+      <div id="admin-form-box" style="display:none;">
+        <div class="settings-row" style="margin-bottom:16px;">
+          <span id="admin-whoami" style="font-size:12px;color:var(--muted);"></span>
+          <button class="dl-btn" style="width:auto;padding:6px 14px;" onclick="adminLogout()">ውጣ</button>
+        </div>
+        <input id="f-title" placeholder="ርዕስ" style="width:100%;padding:12px;margin-bottom:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);">
+        <input id="f-desc" placeholder="አጭር መግለጫ" style="width:100%;padding:12px;margin-bottom:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);">
+        <input id="f-tag" placeholder="መለያ (ለምሳሌ: Firebase)" style="width:100%;padding:12px;margin-bottom:12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);">
+        <button class="dl-btn" onclick="addTutorial()">አክል (Save to Firestore)</button>
+        <p id="admin-msg" style="font-size:12px;margin-top:10px;color:var(--blue);"></p>
+      </div>
+    </div>
+
+    <!-- ================= SETTINGS PAGE ================= -->
+    <div class="page" id="page-settings">
+      <div class="section-head"><h2><span class="accent"></span>ቅንብሮች</h2></div>
+      <div class="settings-row"><span>ማሳወቂያዎች (Notifications)</span><div class="switch on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="settings-row"><span>ጨለማ ገጽታ (Dark Mode)</span><div class="switch on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="settings-row"><span>Rewarded Ad ተመልከት እና ያለ ማስታወቂያ 1 ሰዓት ተጠቀም</span><div class="switch" onclick="this.classList.toggle('on'); playRewardedAdDemo();"></div></div>
+      <div class="ad-slot" style="margin-top:18px;">
+        <b>AD SLOT · NATIVE</b>
+        <span>Native/Inline ማስታወቂያ ቦታ</span>
+      </div>
+      <p style="font-size:11px;color:var(--muted);margin-top:16px;line-height:1.6;">Zed Tips · Version 1.0.0</p>
+    </div>
+
+  </main>
+
+  <nav>
+    <button class="nav-item active" data-page="home">
+      <svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      Home
+    </button>
+    <button class="nav-item" data-page="categories">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Categories
+    </button>
+    <button class="nav-item" data-page="admin">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+      Add
+    </button>
+    <button class="nav-item" data-page="settings">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.6V21a2 2 0 11-4 0v-.2a1.7 1.7 0 00-1-1.6 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.6-1H3a2 2 0 110-4h.2a1.7 1.7 0 001.6-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.6V3a2 2 0 114 0v.2a1.7 1.7 0 001 1.6 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.6 1H21a2 2 0 110 4h-.2a1.7 1.7 0 00-1.6 1z"/></svg>
+      Settings
+    </button>
+  </nav>
+
+</div>
+
+<!-- =========================================================
+     FIREBASE SETUP (Simple JS / compat SDK — no build tools needed)
+     ========================================================= -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+/* ---------------------------------------------------------------
+   1) ይህንን በራስህ Firebase project config ተካው።
+      Firebase Console > Project Settings > General > Your apps > SDK setup
+--------------------------------------------------------------- */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+/* -----------------------------------------------------------
+   አስፈላጊ: Firestore Security Rules (Firebase Console > Firestore > Rules)
+   ማንኛውም ሰው እንዳያነብ/እንዳይጽፍ ለመከላከል ይህን ተጠቀም:
+
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       match /{document=**} {
+         allow read: if true;
+         allow write: if request.auth != null;
+       }
+     }
+   }
+----------------------------------------------------------- */
+
+let db = null;
+let auth = null;
+let firebaseReady = false;
+
+try {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+  auth = firebase.auth();
+  firebaseReady = true;
+} catch (e) {
+  console.warn("Firebase config not set yet — running on demo data.", e);
+}
+
+/* -----------------------------------------------------------
+   Admin login state — controls what shows on the "Add" page
+----------------------------------------------------------- */
+function showAdminLoginUI(){
+  document.getElementById('admin-login-box').style.display = 'block';
+  document.getElementById('admin-form-box').style.display = 'none';
+}
+function showAdminFormUI(user){
+  document.getElementById('admin-login-box').style.display = 'none';
+  document.getElementById('admin-form-box').style.display = 'block';
+  document.getElementById('admin-whoami').textContent = "ገብተሃል: " + user.email;
+}
+
+if(firebaseReady){
+  auth.onAuthStateChanged(user => {
+    if(user) showAdminFormUI(user);
+    else showAdminLoginUI();
+  });
+}
+
+function adminLogin(){
+  const email = document.getElementById('admin-email').value.trim();
+  const pass = document.getElementById('admin-pass').value;
+  const msg = document.getElementById('login-msg');
+  if(!firebaseReady){ msg.textContent = "Firebase configuration ስላልተሞላ Login አይሰራም።"; return; }
+  if(!email || !pass){ msg.textContent = "ኢሜይል እና የይለፍ ቃል ሙላ።"; return; }
+  msg.style.color = "var(--muted)";
+  msg.textContent = "በመግባት ላይ...";
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(() => { msg.textContent = ""; })
+    .catch(err => { msg.style.color = "var(--pink)"; msg.textContent = "❌ " + err.message; });
+}
+
+function adminLogout(){
+  if(firebaseReady) auth.signOut();
+}
+
+const statusBanner = document.getElementById('status-banner');
+
+/* Demo data shown until real Firebase config + data is added */
+const demoTutorials = [
+  { title: "JavaScript በ 10 ደቂቃ", desc: "የ JS መሰረታዊ ነገሮችን በቀላሉ ተማር", tag: "Coding" },
+  { title: "Firebase Firestore Setup", desc: "ዳታቤዝ እንዴት ማገናኘት እንደሚቻል", tag: "Backend" },
+  { title: "AdMob Integration Guide", desc: "ማስታወቂያ በአፕ ውስጥ እንዴት ማስገባት እንደሚቻል", tag: "Monetize" },
+];
+const demoApps = [
+  { name: "Photo Editor Pro", rating: "⭐ 4.7" },
+  { name: "Smart Notes", rating: "⭐ 4.5" },
+  { name: "PDF Tools", rating: "⭐ 4.8" },
+  { name: "VPN Fast", rating: "⭐ 4.3" },
+];
+const demoCategories = ["Coding","Design","AI Tools","Photography","Business","Games"];
+
+function renderTutorials(list){
+  const el = document.getElementById('tutorials-list');
+  el.innerHTML = list.map(t => `
+    <div class="card card-tut">
+      <div class="thumb">${t.tag ? t.tag[0] : "Z"}</div>
+      <div class="tag">${t.tag || "General"}</div>
+      <h3>${t.title}</h3>
+      <p>${t.desc}</p>
+    </div>
+  `).join('');
+}
+
+function renderApps(list){
+  const el = document.getElementById('apps-list');
+  el.innerHTML = list.map(a => `
+    <div class="card app-card">
+      <div class="app-icon">${a.name[0]}</div>
+      <div class="app-meta">
+        <h4>${a.name}</h4>
+        <div class="rating">${a.rating}</div>
+      </div>
+    </div>
+  `).join('') + `<div style="grid-column:1/-1;"><button class="dl-btn" onclick="downloadWithAd()">አውርድ (ማስታወቂያ ካየህ በኋላ)</button></div>`;
+}
+
+function renderPhotos(count){
+  const el = document.getElementById('photos-list');
+  let out = '';
+  for(let i=0;i<count;i++){ out += `<div class="photo">${i+1}</div>`; }
+  el.innerHTML = out;
+}
+
+function renderCategories(list){
+  const el = document.getElementById('categories-list');
+  el.innerHTML = list.map(c => `
+    <div class="card" style="text-align:center;">
+      <div class="app-icon" style="margin:0 auto 8px;">${c[0]}</div>
+      <h4 style="font-size:13px;">${c}</h4>
+    </div>
+  `).join('');
+}
+
+/* -----------------------------------------------------------
+   2) ከFirestore Real-time listener — "tutorials" collection ካለ
+      ራሱ በራሱ ይዘምናል (dynamic update, ኮድ ሳይቀየር)
+----------------------------------------------------------- */
+function loadFromFirestore(){
+  if(!firebaseReady){
+    statusBanner.innerHTML = "⚠️ Firebase configuration አልተሞላም — Demo data እየታየ ነው።";
+    renderTutorials(demoTutorials);
+    renderApps(demoApps);
+    renderPhotos(9);
+    renderCategories(demoCategories);
+    return;
+  }
+  db.collection("tutorials").orderBy("createdAt","desc").onSnapshot(snap => {
+    const items = [];
+    snap.forEach(doc => items.push(doc.data()));
+    renderTutorials(items.length ? items : demoTutorials);
+    statusBanner.innerHTML = `✅ ከFirebase ጋር ተገናኝቷል — ${items.length} ትምህርቶች ተገኝተዋል`;
+  }, err => {
+    statusBanner.innerHTML = "❌ ግንኙነት አልተሳካም: " + err.message;
+    renderTutorials(demoTutorials);
+  });
+
+  db.collection("apps").onSnapshot(snap => {
+    const items = [];
+    snap.forEach(doc => items.push(doc.data()));
+    renderApps(items.length ? items : demoApps);
+  });
+
+  db.collection("categories").onSnapshot(snap => {
+    const items = [];
+    snap.forEach(doc => items.push(doc.data().name));
+    renderCategories(items.length ? items : demoCategories);
+  });
+
+  renderPhotos(9); // ፎቶ storage ጋር ማገናኘት ካስፈለገ Firebase Storage ተጠቀም
+}
+
+loadFromFirestore();
+
+/* -----------------------------------------------------------
+   3) Admin ቅጽ — አዲስ tutorial ወደ Firestore መጻፍ
+----------------------------------------------------------- */
+function addTutorial(){
+  const title = document.getElementById('f-title').value.trim();
+  const desc = document.getElementById('f-desc').value.trim();
+  const tag = document.getElementById('f-tag').value.trim();
+  const msg = document.getElementById('admin-msg');
+
+  if(!title){ msg.textContent = "እባክህ ርዕስ ጻፍ።"; msg.style.color = "var(--pink)"; return; }
+  if(!firebaseReady){ msg.textContent = "Firebase configuration ስላልተሞላ መጻፍ አይቻልም። ከላይ ያለውን firebaseConfig ሙላ።"; msg.style.color="var(--orange)"; return; }
+  if(!auth.currentUser){ msg.textContent = "መጀመሪያ Login አድርግ።"; msg.style.color="var(--pink)"; return; }
+
+  db.collection("tutorials").add({
+    title, desc, tag,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => {
+    msg.textContent = "✅ ተጨመረ! ወደ Home ገጽ ተመልከት።";
+    msg.style.color = "var(--blue)";
+    document.getElementById('f-title').value = '';
+    document.getElementById('f-desc').value = '';
+    document.getElementById('f-tag').value = '';
+  }).catch(err => {
+    msg.textContent = "❌ ስህተት: " + err.message;
+    msg.style.color = "var(--pink)";
+  });
+}
+
+/* -----------------------------------------------------------
+   4) Navigation
+----------------------------------------------------------- */
+document.querySelectorAll('.nav-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('page-' + btn.dataset.page).classList.add('active');
+  });
+});
+
+/* -----------------------------------------------------------
+   5) AdMob demo hooks — ማስታወቂያ የት/መቼ እንደሚነሳ የሚያሳይ ቦታዎች
+   (ትክክለኛው AdMob SDK የሚሰራው በNative wrapper ውስጥ ብቻ ነው — ከታች ማብራሪያ ይመልከት)
+----------------------------------------------------------- */
+function downloadWithAd(){
+  alert("🎬 [Interstitial Ad] እዚህ ይታያል → ካለቀ በኋላ ማውረድ ይጀምራል።");
+  // Native app ውስጥ: AdMob.showInterstitial().then(() => startDownload());
+}
+function playRewardedAdDemo(){
+  alert("🎥 [Rewarded Video Ad] እየታየ ነው... ካለቀ በኋላ ለ1 ሰዓት ማስታወቂያ የለም።");
+  // Native app ውስጥ: AdMob.showRewardedVideo().then(reward => unlockFeature());
+}
+</script>
+</body>
+</html>
