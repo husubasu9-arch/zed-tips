@@ -291,7 +291,10 @@
         <b>AD SLOT · NATIVE</b>
         <span>Native/Inline ማስታወቂያ ቦታ</span>
       </div>
-      <p style="font-size:11px;color:var(--muted);margin-top:16px;line-height:1.6;">Zed Tips · Version 1.0.0</p>
+      <p style="font-size:11px;color:var(--muted);margin-top:16px;line-height:1.6;">
+        <a href="./privacy.html" style="color:var(--blue);text-decoration:none;">የግላዊነት ፖሊሲ (Privacy Policy)</a>
+      </p>
+      <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;">Zed Tips · Version 1.0.0</p>
     </div>
 
   </main>
@@ -406,17 +409,20 @@ const statusBanner = document.getElementById('status-banner');
 
 /* Demo data shown until real Firebase config + data is added */
 const demoTutorials = [
-  { title: "JavaScript በ 10 ደቂቃ", desc: "የ JS መሰረታዊ ነገሮችን በቀላሉ ተማር", tag: "Coding" },
-  { title: "Firebase Firestore Setup", desc: "ዳታቤዝ እንዴት ማገናኘት እንደሚቻል", tag: "Backend" },
-  { title: "AdMob Integration Guide", desc: "ማስታወቂያ በአፕ ውስጥ እንዴት ማስገባት እንደሚቻል", tag: "Monetize" },
+  { title: "JavaScript ለጀማሪዎች", desc: "ተለዋዋጭ (variable)፣ function እና loop በቀላል ምሳሌ ተማር።", tag: "Coding" },
+  { title: "Firebase Firestore በ10 ደቂቃ", desc: "ዳታቤዝ መፍጠር፣ መረጃ ማከል እና real-time ማንበብ እንዴት እንደሚቻል።", tag: "Backend" },
+  { title: "Canva ለጀማሪዎች", desc: "ያለ ዲዛይን ልምድ ማራኪ ፖስተር እና ሎጎ መስራት ትችላለህ።", tag: "Design" },
+  { title: "ChatGPT/Claude በስራ ላይ", desc: "AI መሳሪያዎችን ለስራ ምርታማነት እንዴት እንደምትጠቀም።", tag: "AI Tools" },
+  { title: "Android ስልክ ባትሪ አጠባበቅ", desc: "ባትሪ እድሜን የሚያራዝሙ 7 ቀላል ልምዶች።", tag: "Mobile" },
+  { title: "Telegram ቦት (Bot) መስራት", desc: "ያለ ኮድ ልምድ ቀላል Telegram bot እንዴት እንደሚሰራ።", tag: "Coding" },
 ];
 const demoApps = [
-  { name: "Photo Editor Pro", rating: "⭐ 4.7" },
-  { name: "Smart Notes", rating: "⭐ 4.5" },
-  { name: "PDF Tools", rating: "⭐ 4.8" },
-  { name: "VPN Fast", rating: "⭐ 4.3" },
+  { name: "CapCut", rating: "⭐ 4.7 · ቪዲዮ አርትዖት" },
+  { name: "Canva", rating: "⭐ 4.8 · ዲዛይን" },
+  { name: "Telegram", rating: "⭐ 4.6 · መልእክት" },
+  { name: "Google Drive", rating: "⭐ 4.5 · ማከማቻ" },
 ];
-const demoCategories = ["Coding","Design","AI Tools","Photography","Business","Games"];
+const demoCategories = ["Coding","Design","AI Tools","Mobile","Business","Productivity"];
 
 function renderTutorials(list){
   const el = document.getElementById('tutorials-list');
