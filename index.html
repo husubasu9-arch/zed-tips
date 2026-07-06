@@ -273,10 +273,37 @@
           <span id="admin-whoami" style="font-size:12px;color:var(--muted);"></span>
           <button class="dl-btn" style="width:auto;padding:6px 14px;" onclick="adminLogout()">ውጣ</button>
         </div>
-        <input id="f-title" placeholder="ርዕስ" style="width:100%;padding:12px;margin-bottom:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);">
-        <input id="f-desc" placeholder="አጭር መግለጫ" style="width:100%;padding:12px;margin-bottom:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);">
-        <input id="f-tag" placeholder="መለያ (ለምሳሌ: Firebase)" style="width:100%;padding:12px;margin-bottom:12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);">
-        <button class="dl-btn" onclick="addTutorial()">አክል (Save to Firestore)</button>
+
+        <div style="display:flex;gap:8px;margin-bottom:16px;">
+          <button class="content-type-btn active" data-type="tutorial" onclick="switchContentType('tutorial')" style="flex:1;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font-size:12px;">ትምህርት</button>
+          <button class="content-type-btn" data-type="app" onclick="switchContentType('app')" style="flex:1;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--muted);font-size:12px;">አፕሊኬሽን</button>
+          <button class="content-type-btn" data-type="photo" onclick="switchContentType('photo')" style="flex:1;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--muted);font-size:12px;">ፎቶ</button>
+        </div>
+
+        <!-- Tutorial fields -->
+        <div id="fields-tutorial">
+          <input id="f-title" placeholder="ርዕስ" style="width:100%;padding:12px;margin-bottom:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);">
+          <input id="f-desc" placeholder="አጭር መግለጫ" style="width:100%;padding:12px;margin-bottom:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);">
+          <input id="f-tag" placeholder="መለያ (ለምሳሌ: Firebase)" style="width:100%;padding:12px;margin-bottom:12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);">
+        </div>
+
+        <!-- App fields -->
+        <div id="fields-app" style="display:none;">
+          <input id="f-app-name" placeholder="የአፕ ስም" style="width:100%;padding:12px;margin-bottom:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);">
+          <input id="f-app-rating" placeholder="ደረጃ/መግለጫ (ለምሳሌ: ⭐ 4.7 · ዲዛይን)" style="width:100%;padding:12px;margin-bottom:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);">
+          <input id="f-app-link" placeholder="ማውረጃ ሊንክ (አማራጭ)" style="width:100%;padding:12px;margin-bottom:12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);">
+        </div>
+
+        <!-- Photo fields -->
+        <div id="fields-photo" style="display:none;">
+          <input id="f-photo-caption" placeholder="የፎቶ መግለጫ (አማራጭ)" style="width:100%;padding:12px;margin-bottom:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);">
+          <input id="f-photo-url" placeholder="የፎቶ ሊንክ (Image URL)" style="width:100%;padding:12px;margin-bottom:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);">
+          <p style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.6;">
+            ማስታወሻ: ፋይል በቀጥታ መስቀል (upload) Firebase Storage ክፍያ (Blaze plan) ስለሚፈልግ፣ በምትኩ ፎቶህን ወደ ነጻ አገልግሎት (imgbb.com ወይም postimages.org) ስቀል፣ ከዚያ የሚሰጥህን ሊንክ (image URL) እዚህ ለጥፍ።
+          </p>
+        </div>
+
+        <button class="dl-btn" onclick="addContent()">አክል (Save to Firestore)</button>
         <p id="admin-msg" style="font-size:12px;margin-top:10px;color:var(--blue);"></p>
       </div>
     </div>
@@ -332,13 +359,14 @@
       Firebase Console > Project Settings > General > Your apps > SDK setup
 --------------------------------------------------------------- */
 const firebaseConfig = {
-  apiKey: "AIzaSyBreh79yIyW8Uq6Ouzzd1fu9I-NFbb0emc",
-  authDomain: "zed-tips.firebaseapp.com",
-  projectId: "zed-tips",
-  storageBucket: "zed-tips.firebasestorage.app",
-  messagingSenderId: "909707247275",
-  appId: "1:909707247275:web:96a19af9b7cbb3b7b5c1ee"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
+
 /* -----------------------------------------------------------
    አስፈላጊ: Firestore Security Rules (Firebase Console > Firestore > Rules)
    ማንኛውም ሰው እንዳያነብ/እንዳይጽፍ ለመከላከል ይህን ተጠቀም:
@@ -438,21 +466,30 @@ function renderTutorials(list){
 function renderApps(list){
   const el = document.getElementById('apps-list');
   el.innerHTML = list.map(a => `
-    <div class="card app-card">
+    <div class="card app-card" ${a.link ? `onclick="downloadWithAd('${a.link}')" style="cursor:pointer;"` : ''}>
       <div class="app-icon">${a.name[0]}</div>
       <div class="app-meta">
         <h4>${a.name}</h4>
-        <div class="rating">${a.rating}</div>
+        <div class="rating">${a.rating || ''}</div>
       </div>
     </div>
-  `).join('') + `<div style="grid-column:1/-1;"><button class="dl-btn" onclick="downloadWithAd()">አውርድ (ማስታወቂያ ካየህ በኋላ)</button></div>`;
+  `).join('');
 }
 
-function renderPhotos(count){
+function renderPhotos(list){
   const el = document.getElementById('photos-list');
-  let out = '';
-  for(let i=0;i<count;i++){ out += `<div class="photo">${i+1}</div>`; }
-  el.innerHTML = out;
+  if(Array.isArray(list) && list.length && list[0].url){
+    el.innerHTML = list.map(p => `
+      <div class="photo" style="background:none;">
+        <img src="${p.url}" alt="${p.caption || 'photo'}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;" onerror="this.parentElement.style.background='linear-gradient(135deg,var(--purple),var(--pink),var(--orange))'; this.remove();">
+      </div>
+    `).join('');
+  } else {
+    let out = '';
+    const count = typeof list === 'number' ? list : 9;
+    for(let i=0;i<count;i++){ out += `<div class="photo">${i+1}</div>`; }
+    el.innerHTML = out;
+  }
 }
 
 function renderCategories(list){
@@ -500,7 +537,13 @@ function loadFromFirestore(){
     renderCategories(items.length ? items : demoCategories);
   });
 
-  renderPhotos(9); // ፎቶ storage ጋር ማገናኘት ካስፈለገ Firebase Storage ተጠቀም
+  db.collection("photos").orderBy("createdAt","desc").onSnapshot(snap => {
+    const items = [];
+    snap.forEach(doc => items.push(doc.data()));
+    renderPhotos(items.length ? items : 9);
+  }, err => {
+    renderPhotos(9);
+  });
 }
 
 loadFromFirestore();
@@ -508,29 +551,71 @@ loadFromFirestore();
 /* -----------------------------------------------------------
    3) Admin ቅጽ — አዲስ tutorial ወደ Firestore መጻፍ
 ----------------------------------------------------------- */
-function addTutorial(){
-  const title = document.getElementById('f-title').value.trim();
-  const desc = document.getElementById('f-desc').value.trim();
-  const tag = document.getElementById('f-tag').value.trim();
-  const msg = document.getElementById('admin-msg');
+let currentContentType = 'tutorial';
+function switchContentType(type){
+  currentContentType = type;
+  document.querySelectorAll('.content-type-btn').forEach(b => {
+    if(b.dataset.type === type){
+      b.classList.add('active');
+      b.style.background = 'var(--card-2)';
+      b.style.color = 'var(--text)';
+    } else {
+      b.classList.remove('active');
+      b.style.background = 'var(--card)';
+      b.style.color = 'var(--muted)';
+    }
+  });
+  document.getElementById('fields-tutorial').style.display = type === 'tutorial' ? 'block' : 'none';
+  document.getElementById('fields-app').style.display = type === 'app' ? 'block' : 'none';
+  document.getElementById('fields-photo').style.display = type === 'photo' ? 'block' : 'none';
+  document.getElementById('admin-msg').textContent = '';
+}
 
-  if(!title){ msg.textContent = "እባክህ ርዕስ ጻፍ።"; msg.style.color = "var(--pink)"; return; }
-  if(!firebaseReady){ msg.textContent = "Firebase configuration ስላልተሞላ መጻፍ አይቻልም። ከላይ ያለውን firebaseConfig ሙላ።"; msg.style.color="var(--orange)"; return; }
+function addContent(){
+  const msg = document.getElementById('admin-msg');
+  if(!firebaseReady){ msg.textContent = "Firebase configuration ስላልተሞላ መጻፍ አይቻልም።"; msg.style.color="var(--orange)"; return; }
   if(!auth.currentUser){ msg.textContent = "መጀመሪያ Login አድርግ።"; msg.style.color="var(--pink)"; return; }
 
-  db.collection("tutorials").add({
-    title, desc, tag,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(() => {
-    msg.textContent = "✅ ተጨመረ! ወደ Home ገጽ ተመልከት።";
-    msg.style.color = "var(--blue)";
-    document.getElementById('f-title').value = '';
-    document.getElementById('f-desc').value = '';
-    document.getElementById('f-tag').value = '';
-  }).catch(err => {
-    msg.textContent = "❌ ስህተት: " + err.message;
-    msg.style.color = "var(--pink)";
-  });
+  if(currentContentType === 'tutorial'){
+    const title = document.getElementById('f-title').value.trim();
+    const desc = document.getElementById('f-desc').value.trim();
+    const tag = document.getElementById('f-tag').value.trim();
+    if(!title){ msg.textContent = "እባክህ ርዕስ ጻፍ።"; msg.style.color = "var(--pink)"; return; }
+    db.collection("tutorials").add({ title, desc, tag, createdAt: firebase.firestore.FieldValue.serverTimestamp() })
+      .then(() => {
+        msg.textContent = "✅ ተጨመረ! ወደ Home ገጽ ተመልከት።"; msg.style.color = "var(--blue)";
+        document.getElementById('f-title').value = '';
+        document.getElementById('f-desc').value = '';
+        document.getElementById('f-tag').value = '';
+      })
+      .catch(err => { msg.textContent = "❌ ስህተት: " + err.message; msg.style.color = "var(--pink)"; });
+
+  } else if(currentContentType === 'app'){
+    const name = document.getElementById('f-app-name').value.trim();
+    const rating = document.getElementById('f-app-rating').value.trim();
+    const link = document.getElementById('f-app-link').value.trim();
+    if(!name){ msg.textContent = "እባክህ የአፕ ስም ጻፍ።"; msg.style.color = "var(--pink)"; return; }
+    db.collection("apps").add({ name, rating, link, createdAt: firebase.firestore.FieldValue.serverTimestamp() })
+      .then(() => {
+        msg.textContent = "✅ ተጨመረ! ወደ Home ገጽ ተመልከት።"; msg.style.color = "var(--blue)";
+        document.getElementById('f-app-name').value = '';
+        document.getElementById('f-app-rating').value = '';
+        document.getElementById('f-app-link').value = '';
+      })
+      .catch(err => { msg.textContent = "❌ ስህተት: " + err.message; msg.style.color = "var(--pink)"; });
+
+  } else if(currentContentType === 'photo'){
+    const caption = document.getElementById('f-photo-caption').value.trim();
+    const url = document.getElementById('f-photo-url').value.trim();
+    if(!url){ msg.textContent = "እባክህ የፎቶ ሊንክ (URL) ጻፍ።"; msg.style.color = "var(--pink)"; return; }
+    db.collection("photos").add({ caption, url, createdAt: firebase.firestore.FieldValue.serverTimestamp() })
+      .then(() => {
+        msg.textContent = "✅ ተጨመረ! ወደ Home ገጽ ተመልከት።"; msg.style.color = "var(--blue)";
+        document.getElementById('f-photo-caption').value = '';
+        document.getElementById('f-photo-url').value = '';
+      })
+      .catch(err => { msg.textContent = "❌ ስህተት: " + err.message; msg.style.color = "var(--pink)"; });
+  }
 }
 
 /* -----------------------------------------------------------
@@ -549,8 +634,9 @@ document.querySelectorAll('.nav-item').forEach(btn => {
    5) AdMob demo hooks — ማስታወቂያ የት/መቼ እንደሚነሳ የሚያሳይ ቦታዎች
    (ትክክለኛው AdMob SDK የሚሰራው በNative wrapper ውስጥ ብቻ ነው — ከታች ማብራሪያ ይመልከት)
 ----------------------------------------------------------- */
-function downloadWithAd(){
+function downloadWithAd(link){
   alert("🎬 [Interstitial Ad] እዚህ ይታያል → ካለቀ በኋላ ማውረድ ይጀምራል።");
+  if(link){ window.open(link, '_blank'); }
   // Native app ውስጥ: AdMob.showInterstitial().then(() => startDownload());
 }
 function playRewardedAdDemo(){
