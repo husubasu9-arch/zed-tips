@@ -236,6 +236,10 @@
       </div>
 
       <section>
+        <div id="category-filter-banner" style="display:none;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:10px;background:rgba(34,211,255,.1);border:1px solid rgba(34,211,255,.3);margin-bottom:12px;">
+          <span style="font-size:12px;color:var(--blue);"></span>
+          <button onclick="clearCategoryFilter()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;">✕ አጽዳ</button>
+        </div>
         <div class="section-head">
           <h2><span class="accent"></span>የቴክ ትምህርቶች</h2>
           <span class="see-all">ሁሉንም →</span>
@@ -525,11 +529,36 @@ function renderPhotos(list){
 function renderCategories(list){
   const el = document.getElementById('categories-list');
   el.innerHTML = list.map(c => `
-    <div class="card" style="text-align:center;">
+    <div class="card" style="text-align:center;cursor:pointer;" onclick="filterByCategory('${c}')">
       <div class="app-icon" style="margin:0 auto 8px;">${c[0]}</div>
       <h4 style="font-size:13px;">${c}</h4>
     </div>
   `).join('');
+}
+
+/* ምድብ ስትነካ ወደ Home ገጽ ተመልሶ ያንን መለያ ብቻ ያላቸውን ትምህርቶች ብቻ ያሳያል */
+function filterByCategory(tag){
+  const filtered = allTutorials.filter(t => (t.tag || '').toLowerCase() === tag.toLowerCase());
+  renderTutorials(filtered.length ? filtered : allTutorials);
+
+  const banner = document.getElementById('category-filter-banner');
+  if(banner){
+    banner.style.display = 'flex';
+    banner.querySelector('span').textContent = filtered.length
+      ? `የ"${tag}" ትምህርቶች (${filtered.length})`
+      : `በ"${tag}" ምድብ ውስጥ ትምህርት አልተገኘም — ሁሉንም እያሳየ ነው`;
+  }
+
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.querySelector('.nav-item[data-page="home"]').classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-home').classList.add('active');
+}
+
+function clearCategoryFilter(){
+  renderTutorials(allTutorials);
+  const banner = document.getElementById('category-filter-banner');
+  if(banner) banner.style.display = 'none';
 }
 
 /* -----------------------------------------------------------
@@ -545,14 +574,16 @@ function loadFromFirestore(){
     renderCategories(demoCategories);
     return;
   }
-  db.collection("tutorials").orderBy("createdAt","desc").onSnapshot(snap => {
+db.collection("tutorials").orderBy("createdAt","desc").onSnapshot(snap => {
     const items = [];
     snap.forEach(doc => items.push(doc.data()));
-    renderTutorials(items.length ? items : demoTutorials);
+    allTutorials = items.length ? items : demoTutorials;
+    renderTutorials(allTutorials);
     statusBanner.innerHTML = `✅ ከFirebase ጋር ተገናኝቷል — ${items.length} ትምህርቶች ተገኝተዋል`;
   }, err => {
     statusBanner.innerHTML = "❌ ግንኙነት አልተሳካም: " + err.message;
-    renderTutorials(demoTutorials);
+    allTutorials = demoTutorials;
+    renderTutorials(allTutorials);
   });
 
   db.collection("apps").onSnapshot(snap => {
@@ -619,6 +650,7 @@ loadFromFirestore();
 ----------------------------------------------------------- */
 let currentContentType = 'tutorial';
 let currentPhotoSource = 'file';
+let allTutorials = [];
 
 function switchContentType(type){
   currentContentType = type;
